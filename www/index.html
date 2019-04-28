@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>Example of Websockets with Google Pub/Sub, AIOHTTP and VueJs</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+  <script src="https://unpkg.com/axios@0.16.1/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+  <br /><br />
+  <div v-if="status === 'connected'">
+    <ul id="logs">
+      <li v-for="log in logs" class="log">
+        {{ log.event }}: {{ log.data }}
+      </li>
+    </ul>
+  </div>
+</div>
+<script>
+  const app = new Vue({
+  el: "#app",
+  data: {
+    message: "",
+    logs: [],
+    status: "disconnected"
+  },
+  mounted: function(){
+    axios.get("/last").then((response) => {
+    	this.logs.push({ event: "Last data", data: response.data.message })
+      this.connect();
+    });
+  },
+  methods: {
+    connect() {
+      this.socket = new WebSocket("ws://" + window.location.host + "/ws");
+      this.socket.onopen = () => {
+        this.status = "connected";
+        this.logs.push({ event: "Connected to", data: 'ws://' + window.location.host + '/ws'})
+
+        this.socket.onmessage = ({data}) => {
+          this.logs.push({ event: "External message", data });
+        };
+      };
+    },
+    disconnect() {
+      this.socket.close();
+      this.status = "disconnected";
+      this.logs = [];
+    }
+  }
+});
+</script>
+</body>
+</html>
