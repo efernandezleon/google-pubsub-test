@@ -3,8 +3,8 @@ import os
 import asyncio
 from google.cloud import pubsub_v1
 
-topic = 'subtest'
-subscription = 'subtest'
+topic = os.getenv('GOOGLE_CLOUD_PUBSUB_TOPIC')
+subscription = os.getenv('GOOGLE_CLOUD_PUBSUB_SUBSCRIPTION')
 project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
 last_message = 'NO_LAST_DATA_YET!'
 routes = web.RouteTableDef()
@@ -37,6 +37,7 @@ async def send_msg(websockets, message):
         print('Sending ' + message)
         await ws.send_json(message)
 
+
 # Subscribe to the Pub/Sub topic
 subscriber = pubsub_v1.SubscriberClient()
 topic_name = 'projects/{project_id}/topics/{topic}'.format(
@@ -48,6 +49,7 @@ subscription_name = 'projects/{project_id}/subscriptions/{sub}'.format(
     sub=subscription
 )
 
+# Define the callback for the pubsub
 def callback(message):
     strmessage = message.data.decode('utf-8')
     app['data']['last_message'] = strmessage
@@ -63,6 +65,8 @@ app = web.Application()
 app.add_routes(routes)
 app.router.add_static('/', path=str('./www/'))
 app['websockets'] = set()
+# this is only for testing purposes, for a production mode, the last message should be stored
+# in a distributed cache like Redis
 app['data'] = {}
 app['data']['last_message'] = last_message
 web.run_app(app)
