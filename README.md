@@ -4,7 +4,7 @@ This is a PoC of how to use Python 3+, AIOHTTP and Google Cloud Pub/Sub to forwa
 
 ### Prerequisites
 
-First of all, obviously you should have a Google Cloud account and a configured project with Pub/Sub enabled in order to make some tests. The following links will help you to create the topic, subtopic and get the credentials in json format:
+First of all, obviously you should have a Google Cloud account and a configured project with enabled Pub/Sub in order to make some tests. The following links will help you to create the topic, subtopic and get the credentials in json format:
 
 - Pub/Sub website: https://cloud.google.com/pubsub/
 - Create a topic and a subscription: https://cloud.google.com/pubsub/docs/admin
